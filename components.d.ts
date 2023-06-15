@@ -7,8 +7,14 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ColSetting: typeof import('./src/components/ProTable/components/ColSetting.vue')['default']
     Grid: typeof import('./src/components/Grid/index.vue')['default']
     GridItem: typeof import('./src/components/Grid/components/GridItem.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    Pagination: typeof import('./src/components/ProTable/components/Pagination.vue')['default']
+    ProTable: typeof import('./src/components/ProTable/index.vue')['default']
+    SearchForm: typeof import('./src/components/SearchForm/index.vue')['default']
+    SearchFormItem: typeof import('./src/components/SearchForm/components/SearchFormItem.vue')['default']
+    TableColumn: typeof import('./src/components/ProTable/components/TableColumn.vue')['default']
   }
 }
