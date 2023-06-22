@@ -1,3 +1,5 @@
+import { FieldNamesProps } from "@/components/ProTable/interface";
+
 /**
  * @description 处理 prop 为多级嵌套的情况，返回的数据 (列如: prop: user.name)
  * @param {Object} row 当前行数据
@@ -8,6 +10,17 @@ export function handleRowAccordingToProp(row: { [key: string]: any }, prop: stri
   if (!prop.includes(".")) return row[prop] ?? "--";
   prop.split(".").forEach(item => (row = row[item] ?? "--"));
   return row;
+}
+
+/**
+ * @description 递归查找 callValue 对应的 enum 值
+ * */
+ export function findItemNested(enumData: any, callValue: any, value: string, children: string) {
+  return enumData.reduce((accumulator: any, current: any) => {
+    if (accumulator) return accumulator;
+    if (current[value] === callValue) return current;
+    if (current[children]) return findItemNested(current[children], callValue, value, children);
+  }, null);
 }
 
 /**
@@ -31,6 +44,13 @@ export function filterEnum(callValue: any, enumData?: any, fieldNames?: FieldNam
   } else {
     return filterData ? filterData[label] : "--";
   }
+}
+
+/**
+ * @description:  是否为数组
+ */
+ export function isArray(val: any): val is Array<any> {
+  return val && Array.isArray(val);
 }
 
 /**

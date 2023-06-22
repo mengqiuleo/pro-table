@@ -8,6 +8,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ColSetting: typeof import('./src/components/ProTable/components/ColSetting.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElForm: typeof import('element-plus/es')['ElForm']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     Grid: typeof import('./src/components/Grid/index.vue')['default']
     GridItem: typeof import('./src/components/Grid/components/GridItem.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
