@@ -8,8 +8,8 @@ import { computed, inject, Ref, ref, useAttrs, watch } from "vue";
 import { BreakPoint, Responsive } from "../interface/index";
 
 type Props = {
-  offset?: number;
-  span?: number;
+  offset?: number; //偏移量
+  span?: number; //占几个位置
   suffix?: boolean;
   xs?: Responsive;
   sm?: Responsive;
@@ -52,11 +52,14 @@ const style = computed(() => {
   let offset = props[breakPoint.value]?.offset ?? props.offset;
   if (props.suffix) {
     return {
-      gridColumnStart: cols.value - span - offset + 1,
-      gridColumnEnd: `span ${span + offset}`,
+      //当suffix为true时，该元素占用的网格列开始于第cols.value - span - offset + 1列，结束于第span + offset列
+      gridColumnStart: cols.value - span - offset + 1,//起始位置
+      gridColumnEnd: `span ${span + offset}`,//结束位置
       marginLeft: offset !== 0 ? `calc(((100% + ${gap}px) / ${span + offset}) * ${offset})` : "unset"
     };
   } else {
+    // grid-column: 1 / 4;  使一个元素跨越第 1 到第 3 列
+    // span 1/span 1: 占一列，起始位置和结束位置都是1
     return {
       gridColumn: `span ${span + offset > cols.value ? cols.value : span + offset}/span ${
         span + offset > cols.value ? cols.value : span + offset

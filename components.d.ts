@@ -16,5 +16,6 @@ declare module 'vue' {
     SearchForm: typeof import('./src/components/SearchForm/index.vue')['default']
     SearchFormItem: typeof import('./src/components/SearchForm/components/SearchFormItem.vue')['default']
     TableColumn: typeof import('./src/components/ProTable/components/TableColumn.vue')['default']
+    Test: typeof import('./src/components/Grid/test.vue')['default']
   }
 }
