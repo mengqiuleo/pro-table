@@ -19,7 +19,10 @@ export default defineConfig({
     }),
   ],
   test: {
-    environment: "happy-dom"
+    environment: "happy-dom",
+    deps: {
+      inline: ['element-plus']
+    }
   },
   resolve: {
     alias: {
