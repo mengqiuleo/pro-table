@@ -1,7 +1,6 @@
 import { mount } from "@vue/test-utils";
 import ProTable from "../index.vue";
 import { describe, expect, it, vi } from 'vitest';
-import { getUserList } from '@/api/index'
 
 describe('SearchForm', () => {
   it("renders with columns", () => {

@@ -68,6 +68,7 @@ export function formatValue(callValue: any) {
  * @description 处理 prop，当 prop 为多级嵌套时 ==> 返回最后一级 prop
  * @param {String} prop 当前 prop
  * @returns {String}
+ * eg: prop: "user.detail.age",
  * */
 export function handleProp(prop: string) {
   const propArr = prop.split(".");

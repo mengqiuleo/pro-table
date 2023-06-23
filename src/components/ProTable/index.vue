@@ -80,7 +80,7 @@
       />
     </slot>
   </div>
-  <!-- 列设置 -->
+  <!-- 列设置：右侧抽屉组件 -->
   <ColSetting v-if="toolButton" ref="colRef" v-model:col-setting="colSetting" />
 </template>
 
@@ -150,6 +150,7 @@ watch(() => props.initParam, getTableList, { deep: true });
 
 // 接收 columns 并设置为响应式
 const tableColumns = ref<ColumnProps[]>(props.columns);
+console.log(tableColumns.value)
 
 // 定义 enumMap 存储 enum 值（避免异步请求无法格式化单元格内容 || 无法填充搜索下拉选择）
 const enumMap = ref(new Map<string, { [key: string]: any }[]>());

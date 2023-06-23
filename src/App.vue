@@ -41,12 +41,14 @@ const headerRender = (scope: HeaderRenderScope<ResUserList>) => {
 // dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total && pageNum && pageSize 这些字段，那么你可以在这里进行处理成这些字段
 // 或者直接去 hooks/useTable.ts 文件中把字段改为你后端对应的就行
 const dataCallback = (data: any) => {
-  return {
+  const result =  {
     list: data.data.list,
     total: data.data.total,
     pageNum: data.data.pageNum,
     pageSize: data.data.pageSize
   };
+  console.log('data', result)
+  return result
 };
 
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
@@ -69,6 +71,7 @@ const columns: ColumnProps<ResUserList>[] = [
     label: "用户姓名",
     search: { el: "input" },
     render: scope => {
+      // 自定义渲染内容
       return (
         <el-button type="primary" link onClick={() => ElMessage.success("我是通过 tsx 语法渲染的内容")}>
           {scope.row.username}
@@ -115,6 +118,7 @@ const columns: ColumnProps<ResUserList>[] = [
     search: { el: "tree-select", props: { filterable: true } },
     fieldNames: { label: "userLabel", value: "userStatus" },
     render: scope => {
+      // 自定义渲染内容
       return (
         <>
         {/* 这里是使用了自定义指令实现权限校验，这里省略 */}
