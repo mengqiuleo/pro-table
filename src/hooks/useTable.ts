@@ -55,7 +55,10 @@ export const useTable = (
    * @return void
    * */
   const getTableList = async () => {
-    if (!api) return;
+    if (!api) {
+      console.log('未传递接口api')
+      return;
+    }
     try {
       // 先把初始化参数和分页参数放到总参数里面
       Object.assign(

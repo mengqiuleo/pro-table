@@ -38,7 +38,7 @@ defineExpose({
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .cursor-move {
   cursor: move;
 }

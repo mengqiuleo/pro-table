@@ -1,5 +1,3 @@
-<!-- 📚📚📚 Pro-Table 文档: https://juejin.cn/post/7166068828202336263 -->
-
 <template>
   <!-- 查询表单 card -->
   <SearchForm
@@ -16,12 +14,12 @@
     <!-- 表格头部 操作按钮 -->
     <div class="table-header">
       <div class="header-button-lf">
+        <!-- selectedList（当前选择的数据）、selectedListIds（当前选择的数据id）、isSelected（当前是否选中的数据） -->
         <slot name="tableHeader" :selected-list-ids="selectedListIds" :selected-list="selectedList" :is-selected="isSelected" />
       </div>
       <div v-if="toolButton" class="header-button-ri">
         <slot name="toolButton">
           <el-button :icon="Refresh" circle @click="getTableList" />
-          <el-button v-if="columns.length" :icon="Printer" circle @click="print" />
           <el-button v-if="columns.length" :icon="Operation" circle @click="openColSetting" />
           <el-button v-if="searchColumns.length" :icon="Search" circle @click="isShowSearch = !isShowSearch" />
         </slot>
@@ -87,19 +85,18 @@
 </template>
 
 <script setup lang="ts" name="ProTable">
-import { ref, watch, computed, provide, onMounted } from "vue";
+import { ref, watch, provide, onMounted } from "vue";
 import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
 import { BreakPoint } from "@/components/Grid/interface";
 import { ColumnProps } from "@/components/ProTable/interface";
-import { Refresh, Printer, Operation, Search } from "@element-plus/icons-vue";
-import { filterEnum, formatValue, handleProp, handleRowAccordingToProp } from "@/utils";
+import { Refresh, Operation, Search } from "@element-plus/icons-vue";
+import { handleProp } from "@/utils";
 import SearchForm from "@/components/SearchForm/index.vue";
 import Pagination from "./components/Pagination.vue";
 import ColSetting from "./components/ColSetting.vue";
 import TableColumn from "./components/TableColumn.vue";
-import printJS from "print-js";
 
 export interface ProTableProps {
   columns: ColumnProps[]; // 列配置项  ==> 必传
@@ -206,46 +203,6 @@ const colSetting = tableColumns.value!.filter(
   item => !["selection", "index", "expand"].includes(item.type!) && item.prop !== "operation" && item.isShow
 );
 const openColSetting = () => colRef.value.openColSetting();
-
-// 🙅‍♀️ 不需要打印可以把以下方法删除，打印功能目前存在很多 bug
-// 处理打印数据（把后台返回的值根据 enum 做转换）
-const printData = computed(() => {
-  const handleData = props.data ?? tableData.value;
-  const printDataList = JSON.parse(JSON.stringify(selectedList.value.length ? selectedList.value : handleData));
-  // 找出需要转换数据的列（有 enum || 多级 prop && 需要根据 enum 格式化）
-  const needTransformCol = flatColumns.value!.filter(
-    item => (item.enum || (item.prop && item.prop.split(".").length > 1)) && item.isFilterEnum
-  );
-  needTransformCol.forEach(colItem => {
-    printDataList.forEach((tableItem: { [key: string]: any }) => {
-      tableItem[handleProp(colItem.prop!)] =
-        colItem.prop!.split(".").length > 1 && !colItem.enum
-          ? formatValue(handleRowAccordingToProp(tableItem, colItem.prop!))
-          : filterEnum(handleRowAccordingToProp(tableItem, colItem.prop!), enumMap.value.get(colItem.prop!), colItem.fieldNames);
-      for (const key in tableItem) {
-        if (tableItem[key] === null) tableItem[key] = formatValue(tableItem[key]);
-      }
-    });
-  });
-  return printDataList;
-});
-
-// 打印表格数据（💥 多级表头数据打印时，只能扁平化成一维数组，printJs 不支持多级表头打印）
-const print = () => {
-  const header = `<div style="text-align: center"><h2>${props.title}</h2></div>`;
-  const gridHeaderStyle = "border: 1px solid #ebeef5;height: 45px;color: #232425;text-align: center;background-color: #fafafa;";
-  const gridStyle = "border: 1px solid #ebeef5;height: 40px;color: #494b4e;text-align: center";
-  printJS({
-    printable: printData.value,
-    header: props.title && header,
-    properties: flatColumns
-      .value!.filter(item => !["selection", "index", "expand"].includes(item.type!) && item.isShow && item.prop !== "operation")
-      .map((item: ColumnProps) => ({ field: handleProp(item.prop!), displayName: item.label })),
-    type: "json",
-    gridHeaderStyle,
-    gridStyle
-  });
-};
 
 // 暴露给父组件的参数和方法(外部需要什么，都可以从这里暴露出去)
 defineExpose({
