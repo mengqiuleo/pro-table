@@ -114,6 +114,7 @@ export const useTable = (
    * @return void
    * */
   const updatePageable = (pageable: Table.Pageable) => {
+    if(pageable.pageNum === undefined || pageable.pageSize === undefined || pageable.total === undefined) return;
     Object.assign(state.pageable, pageable);
   };
 

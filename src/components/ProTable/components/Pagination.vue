@@ -1,18 +1,24 @@
 <template>
   <!-- 分页组件 -->
-  <el-pagination
-    :background="true"
-    :current-page="pageable.pageNum"
-    :page-size="pageable.pageSize"
-    :page-sizes="[10, 25, 50, 100]"
-    :total="pageable.total"
-    layout="total, sizes, prev, pager, next, jumper"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
-  ></el-pagination>
+  <el-config-provider :locale="locale"> 
+    <el-pagination
+      :background="true"
+      :current-page="pageable.pageNum"
+      :page-size="pageable.pageSize"
+      :page-sizes="[10, 25, 50, 100]"
+      :total="pageable.total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    ></el-pagination>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts" name="Pagination">
+//中文包
+import zhCn from "element-plus/lib/locale/lang/zh-cn"
+let locale = zhCn
+
 interface Pageable {
   pageNum: number;
   pageSize: number;
