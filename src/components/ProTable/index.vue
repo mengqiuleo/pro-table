@@ -130,7 +130,7 @@ const props = withDefaults(defineProps<ProTableProps>(), {
 // 是否显示搜索模块
 const isShowSearch = ref(true);
 
-// 表格 DOM 元素
+// 表格 DOM 元素: ProTable 组件内部暴露了 el-table DOM，可通过 proTable.value.element.方法名 调用其方法
 const tableRef = ref<InstanceType<typeof ElTable>>();
 
 // 表格多选 Hooks
@@ -204,6 +204,7 @@ const colRef = ref();
 const colSetting = tableColumns.value!.filter(
   item => !["selection", "index", "expand"].includes(item.type!) && item.prop !== "operation" && item.isShow
 );
+console.log('colSetting', colSetting)
 const openColSetting = () => colRef.value.openColSetting();
 
 // 暴露给父组件的参数和方法(外部需要什么，都可以从这里暴露出去)

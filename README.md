@@ -82,11 +82,15 @@ el-date-picker, el-time-picker, el-switch, el-slider
 
 > ProTable 组件内部通过**属性透传**实现父子组件传值，所以支持 el-table && el-table-column 所有事件的调用
 >
+> **对于 el-table DOM，可通过 `proTable.value.element.方法名` 调用其方法**
+>
 > [el-table](https://element-plus.org/zh-CN/component/table.html#table-%E4%BA%8B%E4%BB%B6)
 
 
 
 ### 方法
+
+对于 proTable 的方法，可以通过绑定 ref 实现，调用 `proTable.value?.selectedList`
 
 | 方法名          | 描述                                                         |
 | --------------- | ------------------------------------------------------------ |
@@ -340,6 +344,151 @@ const deleteAccount = (row: any) => {
   <div>{{ selected }}</div>
 </div>
 </template>
+```
+
+
+
+## 实现细节
+
+> 🧐 **首先我们在封装 ProTable 组件的时候，在不影响 el-table 原有的属性、事件、方法的前提下，然后在其基础上做二次封装，否则做得再好，也不太完美。**
+
+
+
+### 表格搜索区域
+
+搜索区域的字段都是存在于表格中的，并且搜索、重置逻辑可复用，所以抽离成 hook，当我们给 pro-table 组件传递 columns 数组时，对于每一个 column（即每一个字段）设置一个 search 属性配置，就能把该项变为搜索项，在 search 配置中可以通过 el 字段指定搜索框的类型。
+
+> 不同类型的搜索框组件通过 **component :is** 动态组件实现
+>
+> [动态组件](https://cn.vuejs.org/guide/essentials/component-basics.html#dynamic-components)
+
+
+
+### 表格数据操作按钮区域
+
+使用 **作用域插槽** 来完成每个页面的数据操作按钮区域
+
+> **scope** 数据中包含：**selectedList（当前选择的数据）、selectedListIds（当前选择的数据id）、isSelected（当前是否选中的数据）**
+
+```vue
+<!-- ProTable 中 tableHeader 插槽 -->
+<slot name="tableHeader" :selectList="selectedList" :selectedListIds="selectedListIds" :isSelected="isSelected"></slot>
+
+<!-- 页面使用 -->
+<template #tableHeader="scope">
+    <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
+    <el-button type="primary" :icon="Upload" plain @click="batchAdd">批量添加用户</el-button>
+    <el-button type="primary" :icon="Download" plain @click="downloadFile">导出用户数据</el-button>
+    <el-button type="danger" :icon="Delete" plain @click="batchDelete(scope.selectedListIds)" :disabled="!scope.isSelected">批量删除用户</el-button>
+</template>
+```
+
+
+
+**关于跨页勾选数据**
+
+```
+<el-table :row-key='rowkey'>
+	<el-table-column :reserve-selection="item.type == 'selection'"></el-table-column>
+</el-table>
+```
+
+
+
+### 表格功能按钮区域
+
+控制表格列设置（列显隐、列排序）：
+
+在父组件中将 colSettingData 数据通过 `v-model` 绑定到 `<colSetting /> `组件上，在该组件内部，通过 `v-model`绑定 `isShow`和`sortable`属性，当通过 `el-switch`切换时，通过 v-model 实现视图驱动模型。
+
+
+
+### 表格主题内容展示区域
+
+可通过 作用域插槽 和 tsx 实现表头、单元格内容自定义渲染
+
+**表头自定义渲染**
+
+```
+<template #usernameHeader="scope">
+	<el-button type="primary" @click="ElMessage.success('我是通过作用域插槽渲染的表头')">
+		{{ scope.column.label }}
+	</el-button>
+</template>
+
+// 自定义渲染表头（使用tsx语法）
+const headerRender = (scope: HeaderRenderScope<ResUserList>) => {
+  return (
+    <el-button type="primary" onClick={() => ElMessage.success("我是通过 tsx 语法渲染的表头")}>
+      {scope.column.label}
+    </el-button>
+  );
+};
+const columns = [
+	{
+		prop: "createTime",
+    label: "创建时间",
+    headerRender,
+    width: 180
+	}
+]
+```
+
+
+
+**单元格自定义渲染**
+
+```
+<template #createTime="scope">
+   <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
+      {{ scope.row.createTime }}
+   </el-button>
+ </template>
+ 
+ // tsx语法
+const columns = [
+ 	{
+    prop: "age",
+    label: "年龄",
+    render: scope => {
+      // 自定义渲染内容
+      return (
+        <>
+          <el-switch
+              model-value={scope.row.status}
+              active-text={scope.row.status ? "启用" : "禁用"}
+              active-value={1}
+              inactive-value={0}
+              onClick={() => changeStatus(scope.row)}
+           />
+        </>
+      );
+    }
+  }
+ ]
+```
+
+
+
+### 暴露 el-table 方法和属性
+
+```
+<template>
+    <el-table
+      ref="tableRef"
+      v-bind="$attrs" 
+    >
+    </el-table>
+</template>
+
+<script setup lang="ts" name="ProTable">
+import { ref } from "vue";
+import { ElTable } from "element-plus";
+
+const tableRef = ref<InstanceType<typeof ElTable>>();
+
+defineExpose({ element: tableRef });
+</script>
 ```
 
 

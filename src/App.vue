@@ -5,7 +5,7 @@ import ProTable from '@/components/ProTable/index.vue';
 import { getUserList } from '@/api/index'
 import { ColumnProps, HeaderRenderScope, ProTableInstance } from './components/ProTable/interface';
 import { ElMessage } from 'element-plus';
-import { CirclePlus, Delete, EditPen, View, Refresh } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, View, Refresh, More } from "@element-plus/icons-vue";
 import { ref, reactive, computed } from 'vue';
 
 interface ResUserList {
@@ -179,6 +179,11 @@ const resetPass = (row: any) => {
 const deleteAccount = (row: any) => {
   ElMessage.success('删除' + row)
 }
+const selectedData = (selectedData: any) => {
+  // ElMessage.success('选中数据', selectedData)
+  console.log(selectedData)
+}
+
 </script>
 
 <template>
@@ -198,6 +203,7 @@ const deleteAccount = (row: any) => {
       <el-button type="danger" :icon="Delete" plain :disabled="!scope.isSelected" @click="deleteUser(scope.selectedListIds)">
         删除用户
       </el-button>
+      <el-button :icon="More" @click="selectedData(scope.selectedList)">选中数据</el-button>
     </template>
     <!-- Expand -->
     <template #expand="scope">
