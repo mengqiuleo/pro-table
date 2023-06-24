@@ -9,7 +9,8 @@ import { filterEnum, formatValue, handleProp, handleRowAccordingToProp } from "@
 
 defineProps<{ column: ColumnProps }>();
 
-const slots = useSlots();
+const slots = useSlots(); //获取父组件的插槽
+console.log('useSlots', slots)
 
 const enumMap = inject("enumMap", ref(new Map()));
 console.log('enumMap', enumMap)

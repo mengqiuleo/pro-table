@@ -44,6 +44,7 @@
           :align="item.align ?? 'center'"
           :reserve-selection="item.type == 'selection'"
         >
+        <!-- 实现跨页数据勾选保存：设置 rowKey，每一行设置reserve-selection -->
           <template v-if="item.type == 'expand'" #default="scope">
             <component :is="item.render" v-bind="scope" v-if="item.render"> </component>
             <slot v-else :name="item.type" v-bind="scope"></slot>

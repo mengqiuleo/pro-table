@@ -6,7 +6,7 @@ import { getUserList } from '@/api/index'
 import { ColumnProps, HeaderRenderScope, ProTableInstance } from './components/ProTable/interface';
 import { ElMessage } from 'element-plus';
 import { CirclePlus, Delete, EditPen, View, Refresh } from "@element-plus/icons-vue";
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 
 interface ResUserList {
   id: string;
@@ -38,6 +38,12 @@ const headerRender = (scope: HeaderRenderScope<ResUserList>) => {
   );
 };
 
+// 当前选中的数据
+const selected = computed(() => proTable.value?.selectedList)
+console.log('Protable暴露出来的属性和方法', proTable)
+console.log('勾选的数据', selected)
+
+
 // dataCallback 是对于返回的表格数据做处理，如果你后台返回的数据不是 list && total && pageNum && pageSize 这些字段，那么你可以在这里进行处理成这些字段
 // 或者直接去 hooks/useTable.ts 文件中把字段改为你后端对应的就行
 const dataCallback = (data: any) => {
@@ -63,8 +69,8 @@ const getTableList = (params: any) => {
 
 // 表格配置项
 const columns: ColumnProps<ResUserList>[] = [
-  { type: "selection", fixed: "left", width: 80 },
-  { type: "index", label: "#", width: 80 },
+  { type: "selection", fixed: "left", width: 50 },
+  { type: "index", label: "#", width: 50 },
   { type: "expand", label: "Expand", width: 100 },
   {
     prop: "username",
@@ -177,6 +183,7 @@ const deleteAccount = (row: any) => {
 
 <template>
 <div class="content-box">
+
   <ProTable
     ref="proTable"
     title="用户列表"
@@ -216,6 +223,7 @@ const deleteAccount = (row: any) => {
       <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)"> 删除 </el-button>
     </template>
   </ProTable>
+  <div>{{ selected }}</div>
 </div>
 </template>
 
